@@ -19,6 +19,11 @@ const typeDefs = gql`
 `;
 
 const resolvers = {
+  Astronaut: {
+    __resolveReference(ref) {
+      return fetch(`${apiUrl}/astronauts/${ref.id}`).then(res => res.json());
+    }
+  },
   Query: {
     astronaut(_, { id }) {
       return fetch(`${apiUrl}/astronauts/${id}`).then(res => res.json());
@@ -30,9 +35,9 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-    schema: buildFederatedSchema([{ typeDefs, resolvers }])
-  });
-  
-  server.listen({ port }).then(({ url }) => {
-    console.log(`Astronauts service ready at ${url}`);
-  });
+  schema: buildFederatedSchema([{ typeDefs, resolvers }])
+});
+
+server.listen({ port }).then(({ url }) => {
+  console.log(`Astronauts service ready at ${url}`);
+});
